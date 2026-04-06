@@ -1,4 +1,4 @@
-# KB Agent — LLM 驱动的个人知识库
+# KB Agent — 简易 LLM驱动的个人知识库
 
 LLM 驱动的智能知识库管理系统。思想来自 [Andrej Karpathy](https://x.com/karpathy) 关于用 LLM 构建个人知识库的理念。支持多种 LLM 后端（Claude CLI / OpenAI / Anthropic API / Ollama 等），提供文档摄入、自动编译为结构化 Wiki 文章、语义搜索、自然语言问答，以及质量检查与自动修复。CLI 和 Web 两种使用方式。
 
