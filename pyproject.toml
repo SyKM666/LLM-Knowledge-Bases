@@ -1,0 +1,26 @@
+[project]
+name = "kb-agent"
+version = "0.1.0"
+description = "LLM-powered personal knowledge base agent"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "flask>=3.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.30"]
+all = ["openai>=1.0", "anthropic>=0.30"]
+
+[project.scripts]
+kb = "kb_agent.cli:cli"
+kb-web = "kb_agent.web:main"
+
+[tool.setuptools.packages.find]
+include = ["kb_agent*"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

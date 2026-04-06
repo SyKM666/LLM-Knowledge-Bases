@@ -1,0 +1,3 @@
+[console_scripts]
+kb = kb_agent.cli:cli
+kb-web = kb_agent.web:main
