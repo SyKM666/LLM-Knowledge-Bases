@@ -12,7 +12,8 @@ dependencies = [
 [project.optional-dependencies]
 openai = ["openai>=1.0"]
 anthropic = ["anthropic>=0.30"]
-all = ["openai>=1.0", "anthropic>=0.30"]
+pdf = ["pymupdf>=1.24"]
+all = ["openai>=1.0", "anthropic>=0.30", "pymupdf>=1.24"]
 
 [project.scripts]
 kb = "kb_agent.cli:cli"

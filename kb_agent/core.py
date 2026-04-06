@@ -1,5 +1,6 @@
 """Core logic for the knowledge base agent."""
 
+import os
 import re
 import shutil
 from pathlib import Path
@@ -8,9 +9,10 @@ from urllib.request import urlopen
 from . import llm
 
 # Directories (relative to CWD)
-RAW_DIR = Path("raw")
-WIKI_DIR = Path("wiki")
-OUTPUT_DIR = Path("output")
+DATA_DIR = Path(os.environ.get("KB_DATA_DIR", "data"))
+RAW_DIR = DATA_DIR / "raw"
+WIKI_DIR = DATA_DIR / "wiki"
+OUTPUT_DIR = DATA_DIR / "output"
 INDEX_FILE = WIKI_DIR / "INDEX.md"
 
 MAX_RAW_CHARS = 100_000  # truncate oversized raw docs
@@ -51,25 +53,76 @@ def load_wiki_articles() -> dict[str, str]:
     return articles
 
 
+# ── PDF extraction ─────────────────────────────────────────────────────
+
+def extract_pdf(pdf_path: Path) -> str:
+    """Extract text from a PDF file. Returns markdown-formatted text."""
+    try:
+        import pymupdf
+    except ImportError:
+        raise RuntimeError(
+            "pymupdf package required for PDF support. "
+            "Install it with: pip install 'kb-agent[pdf]'"
+        )
+
+    doc = pymupdf.open(pdf_path)
+    pages = []
+    for page in doc:
+        text = page.get_text()
+        if text.strip():
+            pages.append(text)
+    doc.close()
+    return "\n\n---\n\n".join(pages)
+
+
+def _save_as_md(dest: Path, content: str) -> Path:
+    """Save content as .md file, converting the extension if needed."""
+    md_dest = dest.with_suffix(".md")
+    md_dest.write_text(content)
+    return md_dest
+
+
 # ── Ingest ──────────────────────────────────────────────────────────────
 
 def ingest(path: str):
-    """Copy a local file or fetch a URL into raw/."""
+    """Copy a local file or fetch a URL into raw/. PDFs are auto-converted to markdown."""
     ensure_dirs()
     if path.startswith("http://") or path.startswith("https://"):
         # simple URL fetch
         slug = slugify(path.split("/")[-1] or "page") + ".md"
         dest = RAW_DIR / slug
         with urlopen(path) as resp:
-            dest.write_bytes(resp.read())
-        return dest
+            data = resp.read()
+        # Check if downloaded content is PDF
+        if data[:5] == b"%PDF-":
+            dest.write_bytes(data)
+            text = extract_pdf(dest)
+            dest.unlink()
+            return _save_as_md(dest, text)
+        else:
+            dest.write_bytes(data)
+            return dest
     else:
         src = Path(path).expanduser().resolve()
         if not src.exists():
             raise FileNotFoundError(f"Source not found: {src}")
-        dest = RAW_DIR / src.name
-        shutil.copy2(src, dest)
-        return dest
+        if src.suffix.lower() == ".pdf":
+            text = extract_pdf(src)
+            return _save_as_md(RAW_DIR / src.name, text)
+        else:
+            dest = RAW_DIR / src.name
+            shutil.copy2(src, dest)
+            return dest
+
+
+def ingest_pdf_bytes(filename: str, data: bytes) -> Path:
+    """Ingest PDF from raw bytes (used by web upload). Returns dest path."""
+    ensure_dirs()
+    tmp = RAW_DIR / filename
+    tmp.write_bytes(data)
+    text = extract_pdf(tmp)
+    tmp.unlink()
+    return _save_as_md(tmp, text)
 
 
 # ── Compile ─────────────────────────────────────────────────────────────

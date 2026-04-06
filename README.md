@@ -4,7 +4,7 @@ LLM 驱动的智能知识库管理系统。思想来自 [Andrej Karpathy](https:
 
 ## 功能概览
 
-- **文档摄入** — 从文件或 URL 导入原始文档
+- **文档摄入** — 从文件或 URL 导入原始文档，支持 PDF 自动提取文本
 - **智能编译** — 利用 Claude 将原始文档编译为结构化 Wiki 文章
 - **关键词搜索** — 在知识库中快速检索相关文章
 - **自然语言问答** — 基于 RAG 模式对知识库提问，可智能将回答整合进已有文章或创建新文章
@@ -30,9 +30,10 @@ LLM 驱动的智能知识库管理系统。思想来自 [Andrej Karpathy](https:
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.ts
-├── raw/                 # 原始文档
-├── wiki/                # 编译后的 Wiki 文章
-├── output/              # 导出目录
+├── data/                # 数据目录（可通过 KB_DATA_DIR 自定义）
+│   ├── raw/             # 原始文档
+│   ├── wiki/            # 编译后的 Wiki 文章
+│   └── output/          # 导出目录
 └── pyproject.toml       # Python 包配置
 ```
 
@@ -61,6 +62,9 @@ LLM 驱动的智能知识库管理系统。思想来自 [Andrej Karpathy](https:
 # 安装 Python 后端
 pip install -e .
 
+# 如需 PDF 支持
+pip install -e ".[pdf]"
+
 # 如需使用 OpenAI 兼容 API
 pip install -e ".[openai]"
 
@@ -77,8 +81,9 @@ cd frontend && npm install
 ### 启动 Web UI
 
 ```bash
-# 终端 1：启动后端服务 (端口 5001)
+# 终端 1：启动后端服务（默认端口 5002，可通过 KB_PORT 自定义）
 kb-web
+# 或指定端口：KB_PORT=8080 kb-web
 
 # 终端 2：启动前端开发服务器 (端口 5173)
 cd frontend

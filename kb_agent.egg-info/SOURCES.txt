@@ -1,3 +1,4 @@
+README.md
 pyproject.toml
 kb_agent/__init__.py
 kb_agent/cli.py

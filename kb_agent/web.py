@@ -133,9 +133,12 @@ def ingest_file():
     if not f.filename:
         return jsonify({"error": "No filename"}), 400
     core.ensure_dirs()
-    dest = core.RAW_DIR / f.filename
-    f.save(dest)
-    return jsonify({"filename": f.filename, "path": str(dest)})
+    if f.filename.lower().endswith(".pdf"):
+        dest = core.ingest_pdf_bytes(f.filename, f.read())
+    else:
+        dest = core.RAW_DIR / f.filename
+        f.save(dest)
+    return jsonify({"filename": dest.name, "path": str(dest)})
 
 
 @app.route("/api/ingest/text", methods=["POST"])
@@ -166,8 +169,9 @@ def delete_article(slug):
 
 def main():
     core.ensure_dirs()
-    print("KB Agent Web UI → http://localhost:5001")
-    app.run(debug=True, port=5001, use_reloader=False)
+    port = int(os.environ.get("KB_PORT", 5002))
+    print(f"KB Agent Web UI → http://localhost:{port}")
+    app.run(debug=True, port=port, use_reloader=False)
 
 
 if __name__ == "__main__":

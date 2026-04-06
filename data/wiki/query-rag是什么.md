@@ -30,3 +30,18 @@ RAG（Retrieval-Augmented Generation，检索增强生成）是一种将**信息
 | **Modular RAG** | 可拆解、可组合的模块化组件 |
 
 RAG 通常依赖**向量数据库**（如 Pinecone、Milvus、Chroma 等）作为检索后端 [[vector-databases]]，并建立在 **Transformer 架构**之上进行文本生成 [[transformer-architecture]]。在实际生产系统中，RAG 常与微调（fine-tuning）结合使用，以获得更好的效果。
+
+> **注**：本文为 RAG 概念的中文速览。更详细的技术介绍请参阅 [[rag-retrieval-augmented-generation]]。
+
+## See Also
+
+- [[rag-retrieval-augmented-generation]] — RAG 的详细英文技术文档
+- [[vector-databases]] — RAG 检索后端常用的向量数据库
+- [[transformer-architecture]] — RAG 生成阶段所依赖的 Transformer 架构
+
+## Categories
+
+- AI技术
+- 自然语言处理
+- 信息检索
+- 大语言模型
