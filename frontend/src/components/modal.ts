@@ -221,7 +221,7 @@ async function submitIngest(): Promise<void> {
 
       const mainContent = document.getElementById("mainContent")!;
       mainContent.innerHTML =
-        '<div class="panel"><div class="panel-title">Ingested</div>Document added to raw/. Click <strong>Compile</strong> to process it into the wiki.</div>';
+        '<div class="panel"><div class="panel-title">Ingested</div>Document added to data/raw/. Click <strong>Compile</strong> to process it into the wiki.</div>';
     }
   } catch (e) {
     alert(`Ingest error: ${e}`);

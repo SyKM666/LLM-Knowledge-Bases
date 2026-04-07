@@ -37,7 +37,7 @@ export async function showArticle(slug: string): Promise<void> {
   try {
     const data = await api.getArticle(slug);
     setContent(`<div class="md-content">${renderMarkdown(data.content)}</div>`);
-    setStatus(`wiki/${slug}.md`);
+    setStatus(`data/wiki/${slug}.md`);
   } catch (e) {
     setContent(`<div class="panel error"><div class="panel-title">Error</div>${e}</div>`);
   }
@@ -53,7 +53,7 @@ export async function showIndex(): Promise<void> {
   try {
     const data = await api.getIndex();
     setContent(`<div class="md-content">${renderMarkdown(data.content)}</div>`);
-    setStatus("wiki/INDEX.md");
+    setStatus("data/wiki/INDEX.md");
   } catch (e) {
     setContent(`<div class="panel error"><div class="panel-title">Error</div>${e}</div>`);
   }
